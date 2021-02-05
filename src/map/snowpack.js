@@ -6,8 +6,32 @@ import {
   Sprite,
 } from "@/pixi/alias";
 
-export function map() {
+export const map = () => {
+  const setup = (loader, resources) =>  { // setup for after loader
+    //Create referencial snowpack sprite
+    other = new Sprite(resources.pixijs.texture);
+    other.x = 100;
+    other.y = 100;
+    other.width = 60;
+    other.height = 60;
+    stage.addChild(other);
 
+    //Create the snowpack sprite 
+    snowpack = new Sprite(resources.snowpack.texture);
+    snowpack.y = 96; 
+    snowpack.width = 100;
+    snowpack.height = 100;
+    stage.addChild(snowpack);
+  
+    // Center initial player position
+    stage.position.set(app.renderer.screen.width/2, app.renderer.screen.height/2);
+  
+    // Define runtime function
+    state = play;
+   
+    //Start the game loop 
+    app.ticker.add(delta => gameLoop(delta));
+  }
   // Verify exists support for WEBGL
   if(!utils.isWebGLSupported()){
     throw new Error("WEBGL is required!");
@@ -41,7 +65,8 @@ export function map() {
   //Define any variables that are used in more than one function
   let snowpack, other, state;
   
-  function play(delta) {
+  
+  const play = (delta) => {
     const speed = 2 * delta; // Speed default 2 + Deltatime
     
     // Keyboard
@@ -55,35 +80,8 @@ export function map() {
     if (Keyboard.isKeyDown('ArrowDown', 'KeyS'))
       snowpack.y += speed;
   }
-   
-  function setup(loader, resources) {
   
-    //Create referencial snowpack sprite
-    other = new Sprite(resources.pixijs.texture);
-    other.x = 100;
-    other.y = 100;
-    other.width = 60;
-    other.height = 60;
-    stage.addChild(other);
-
-    //Create the snowpack sprite 
-    snowpack = new Sprite(resources.snowpack.texture);
-    snowpack.y = 96; 
-    snowpack.width = 100;
-    snowpack.height = 100;
-    stage.addChild(snowpack);
-  
-    // Center initial player position
-    stage.position.set(app.renderer.screen.width/2, app.renderer.screen.height/2);
-  
-    // Define runtime function
-    state = play;
-   
-    //Start the game loop 
-    app.ticker.add(delta => gameLoop(delta));
-  }
-  
-  function gameLoop(delta){
+  const gameLoop = (delta) => {
   
     //Move the cat 1 pixel 
     state(delta);
